@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoPulse | Carbon Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div id="greenScoreDisplay" class="green-score-container hidden">
+        <div class="score-badge-wrapper">
+            <div class="plant-icon">🌱</div>
+            <div id="pointsCount" class="points-count">0</div>
+        </div>
+        <div class="score-tooltip">
+            <strong>Total Green Score</strong><br>
+            <span id="scoreValue">0</span> Points
+            <div id="pointsGrid" class="points-grid"></div>
+            <small>Hover squares for details</small>
+        </div>
+    </div>
+
+    <section id="page0" class="page active">
+        <div class="container">
+            <h1 class="brand-title">EcoPulse</h1>
+            <p class="tagline">Join the Green Movement</p>
+            
+            <div class="auth-box">
+                <input type="text" id="username" placeholder="Username">
+                <input type="email" id="email" class="hidden" placeholder="Email Address">
+                <input type="password" id="password" placeholder="Password">
+                
+                <div class="auth-buttons">
+                    <button id="authBtn" class="btn-login-main" onclick="handleAuth()">Login</button>
+                    <button id="toggleBtn" class="btn-signup-outline" onclick="toggleAuthMode()">New? Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="page1" class="page">
+        <div class="container">
+            <h1 class="brand-title">EcoPulse</h1>
+            <p class="tagline">"Track Today's choices, Protect Tomorrow's Planet"</p>
+            <p>Welcome back, <span id="displayUser" style="color:var(--primary); font-weight:bold;"></span>!</p>
+            <button class="btn-calc" onclick="navigateTo('page2')">Start Assessment</button>
+        </div>
+    </section>
+
+    <section id="page2" class="page">
+        <div class="container">
+            <h2>How can we help?</h2>
+            <div class="menu-selection">
+                <button class="btn-menu-large" onclick="navigateTo('page_bot')">
+                    <div class="icon">💬</div>
+                    <span>Eco-Assistant</span>
+                    <small>Ask about carbon levels</small>
+                </button>
+                <button class="btn-menu-large" onclick="navigateTo('page_form')">
+                    <div class="icon">📝</div>
+                    <span>Usage Form</span>
+                    <small>Log daily data</small>
+                </button>
+            </div>
+            <button class="btn-logout-small" onclick="logout()">Logout</button>
+        </div>
+    </section>
+
+    <section id="page_form" class="page">
+        <div class="container">
+            <h2>Daily Usage Form</h2>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Select Date</label>
+                    <input type="date" id="entryDate" required>
+                </div>
+                <div class="input-group">
+                    <label>No. of People in Household</label>
+                    <input type="number" id="people" value="1" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Kms Traveled Today</label>
+                    <input type="number" id="km" placeholder="e.g. 20">
+                </div>
+                <div class="input-group">
+                    <label>Fuel Type</label>
+                    <select id="fuel">
+                        <option value="petrol">Petrol</option>
+                        <option value="diesel">Diesel</option>
+                        <option value="cng">CNG</option>
+                        <option value="electric">Electric</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="input-group full-width">
+                    <label>Appliance Usage (Hours)</label>
+                    <div class="hours-grid">
+                        <input type="number" id="fan" placeholder="Fan hrs">
+                        <input type="number" id="ac" placeholder="AC hrs">
+                        <input type="number" id="laptop" placeholder="Laptop hrs">
+                        <input type="number" id="light" placeholder="Light hrs">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Diet Type</label>
+                    <select id="food">
+                        <option value="veg">Vegetarian</option>
+                        <option value="mixed">Mixed</option>
+                        <option value="non-veg">Non-Vegetarian</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Plastic Items Used</label>
+                    <input type="number" id="plastic" placeholder="Qty">
+                </div>
+            </div>
+            <div class="form-footer">
+                <button class="btn-calc" onclick="calculateImpact()">Calculate Footprint</button>
+                <button class="btn-back-form" onclick="navigateTo('page2')">← Back to Menu</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="page_bot" class="page">
+        <div class="container">
+            <h2>Eco-Assistant</h2>
+            <div id="chat-messages" class="chat-display"></div>
+            <div class="auth-box"> <input type="text" id="bot-input" placeholder="Ask about 5kg beef, 100km flight...">
+                <button class="btn-calc" onclick="askBot()">Ask Bot</button>
+            </div>
+            <button class="btn-logout-small" onclick="navigateTo('page2')">← Back to Menu</button>
+        </div>
+    </section>
+
+    <section id="page3" class="page">
+        <div class="container">
+            <div id="loader" class="loader-box hidden">
+                <div class="spinner"></div>
+                <p class="loader-text">Analyzing Data...</p>
+            </div>
+
+            <div id="resultContent" class="hidden">
+                <h2 id="statusLabel">Your Impact</h2>
+                
+                <div class="auth-buttons"> <button class="btn-login-main" style="font-size: 0.8rem;" onclick="viewReport(7)">Weekly</button>
+                    <button class="btn-signup-outline" style="font-size: 0.8rem;" onclick="viewReport(30)">Monthly</button>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="resultChart"></canvas>
+                </div>
+
+                <div class="history-table-container">
+                    <h3>Data Logs</h3>
+                    <table id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>DATE</th>
+                                <th>KG CO2</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody"></tbody>
+                    </table>
+                    <button class="btn-logout-small" style="color: red;" onclick="clearHistory()">Clear All Data</button>
+                </div>
+
+                <button class="btn-calc" onclick="navigateTo('page4')">See Suggestions</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="page4" class="page">
+        <div class="container">
+            <h2>Recommendations</h2>
+            <div id="suggestions" class="suggestions-list"></div>
+            <button class="btn-calc" onclick="navigateTo('page2')">Back to Menu</button>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
